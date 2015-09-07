@@ -1,7 +1,6 @@
 package com.joebowbeer.scaladragon
 
-import java.io.ByteArrayOutputStream
-import java.io.PrintStream
+import java.io.{ ByteArrayOutputStream, PrintStream }
 import org.junit.Test
 import org.scalatest.junit.JUnitSuite
 import scala.io.Source
