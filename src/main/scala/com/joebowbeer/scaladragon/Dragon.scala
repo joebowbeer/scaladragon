@@ -28,11 +28,7 @@ object Dragon {
    * @param args the unused command line arguments
    */
   def solve(in: Source, out: PrintStream) {
-    try {
-      out.println(format(solve(parse(in))))
-    } catch {
-      case _: Exception => out.println(Failure)
-    }
+    out.println(try { format(solve(parse(in))) } catch { case _: Exception => Failure })
   }
 
   /**
