@@ -3,73 +3,66 @@ package com.joebowbeer.scaladragon
 import java.io.{ ByteArrayOutputStream, PrintStream }
 import org.junit.Test
 import org.scalatest.junit.JUnitSuite
+import org.scalatest.Matchers
 import scala.io.Source
 import scala.util.Random
 
-class DragonSuite extends JUnitSuite {
-
-//  @Test def failsEmpty() {
-//    assertResult(None) { Dragon.solve(Array()) }
-//  }
+class DragonSuite extends JUnitSuite with Matchers {
 
   @Test def solvesOne() {
     val canyon = Array(1)
     val solution = Array(0)
     checkSolution(canyon, solution)
-    assertResult(solution) { Dragon.solve(canyon).get }
+    Dragon solve (canyon) should contain(solution)
   }
 
   @Test def solvesSample() {
     val canyon = Array(5, 6, 0, 4, 2, 4, 1, 0, 0, 4)
     val solution = Array(0, 5, 9)
     checkSolution(canyon, solution)
-    assertResult(solution) { Dragon.solve(canyon).get }
+    Dragon solve (canyon) should contain(solution)
   }
 
-//  @Test def failsDragon() {
-//    assertResult(None) { Dragon.solve(Array(0)) }
-//  }
-
   @Test def parsesEmpty() {
-    assertResult(Array()) { Dragon.parse(source()) }
+    Dragon parse (source()) should be(Array())
   }
 
   @Test def parsesOne() {
-    assertResult(Array(1)) { Dragon.parse(source(1)) }
+    Dragon parse (source(1)) should be(Array(1))
   }
 
   @Test def parsesSampleInput() {
-    assertResult(Array(5, 6, 0, 4, 2, 4, 1, 0, 0, 4)) {
-      Dragon.parse(source(5, 6, 0, 4, 2, 4, 1, 0, 0, 4))
-    }
+    Dragon parse (source(5, 6, 0, 4, 2, 4, 1, 0, 0, 4)) should be(
+      Array(5, 6, 0, 4, 2, 4, 1, 0, 0, 4)
+    )
   }
 
-//  @Test def formatsNone() {
-//    assertResult("failure") { Dragon.format(None) }
-//  }
-
   @Test def formatsZero() {
-    assertResult("0, out") { Dragon.format(Array(0)) }
+    Dragon format (Array(0)) should be("0, out")
   }
 
   @Test def formatsSampleSolution() {
-    assertResult("0, 5, 9, out") { Dragon.format(Array(0, 5, 9)) }
+    Dragon format (Array(0, 5, 9)) should be("0, 5, 9, out")
   }
 
   @Test def failsEmptyInput() {
-    assertResult("failure") { solutionOf() }
+    solutionOf() should be("failure")
   }
 
   @Test def solvesOneInput() {
-    assertResult("0, out") { solutionOf(1) }
+    solutionOf(1) should be("0, out")
   }
 
   @Test def solvesSampleInput() {
-    assertResult("0, 5, 9, out") { solutionOf(5, 6, 0, 4, 2, 4, 1, 0, 0, 4) }
+    solutionOf(5, 6, 0, 4, 2, 4, 1, 0, 0, 4) should be("0, 5, 9, out")
+  }
+
+  @Test def failsInitialDragon() {
+    solutionOf(0) should be("failure")
   }
 
   @Test def failsNegativeInput() {
-    assertResult("failure") { solutionOf(-1) }
+    solutionOf(-1) should be("failure")
   }
 
   @Test def solvesRandomCanyons() {
@@ -78,10 +71,10 @@ class DragonSuite extends JUnitSuite {
     val dragonCount = 10000
     for (trial <- 0 until 10) {
       val canyon = randomCanyon(canyonLength, longestFlight, dragonCount)
-      Dragon.solve(canyon) match {
+      Dragon solve (canyon) match {
         case Some(traversal) => {
-          printf("Trial %2d: traversal length %d%n", trial, traversal.length)
-          checkSolution(canyon, traversal)           
+          printf("Trial %2d: traversal length %d%n", trial, traversal length)
+          checkSolution(canyon, traversal)
         }
         case None => printf("Trial %2d: No traversal!%n", trial)
       }
@@ -89,18 +82,18 @@ class DragonSuite extends JUnitSuite {
   }
 
   def source(values: Int*): Source = {
-    Source.fromString(if (values nonEmpty) values.mkString("", "\n", "\n") else "")
+    Source fromString (if (values nonEmpty) values mkString ("", "\n", "\n") else "")
   }
 
   def solutionOf(values: Int*): String = {
     val baos = new ByteArrayOutputStream()
     val ps = new PrintStream(baos)
     try {
-      Dragon.solve(source(values: _*), ps)
+      Dragon solve (source(values: _*), ps)
     } finally {
-      ps.close()
+      ps close ()
     }
-    Source.fromString(baos.toString).getLines.next
+    Source.fromString(baos toString).getLines.next
   }
 
   def randomCanyon(canyonLength: Int, longestFlight: Int, dragonCount: Int): Array[Int] = {
@@ -126,8 +119,10 @@ class DragonSuite extends JUnitSuite {
 
   /** Validates traversal. */
   def checkSolution(canyon: Array[Int], traversal: Array[Int]) = {
-    assertResult(0) { traversal(0) }
-    traversal.foldRight(canyon.length) {(index, nextIndex) =>
+    // Verify that 0 is visited first.
+    assert(traversal(0) == 0)
+    // Verify each cell is reachable from its predecessor and that final flight leaves the canyon.
+    traversal.foldRight(canyon length) { (index, nextIndex) =>
       assert(index + canyon(index) >= nextIndex)
       index
     }
