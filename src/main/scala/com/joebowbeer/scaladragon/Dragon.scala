@@ -24,42 +24,26 @@ object Dragon {
 
   /**
    * Reads input from given input stream and writes solution to given print stream.
-   *
-   * @param args the unused command line arguments
    */
   def solve(in: Source, out: PrintStream) {
-    out.println(try { format(solve(parse(in))) } catch { case _: Exception => Failure })
-  }
-
-  /**
-   * Returns array of numbers read from the given input stream.
-   */
-  def parse(in: Source): Array[Int] = in.getLines map (_.toInt) toArray
-
-  /**
-   * Returns string representation for the given solution.
-   */
-  def format(indices: Array[Int]): String = indices match {
-    case Array() => Failure
-    case _ => indices.mkString("", ", ", ", " + Out)
+    val solution = try { solve(parse(in)) } catch { case _: Exception => None }
+    out.println(solution.map(format).getOrElse(Failure))
   }
 
   /**
    * Searches for a shortest solution.
    *
    * @param canyon array of non-negative numbers representing dragons and maximum flight lengths
-   * @return shortest solution found, or an empty array if no solution found
+   * @return shortest solution found, or None if no solution found
    */
-  def solve(canyon: Array[Int]): Array[Int] = {
-    require(canyon forall (_ >= 0))
+  def solve(canyon: Array[Int]): Option[Array[Int]] = {
+    require(canyon.nonEmpty && canyon(0) != 0 && canyon.forall(_ >= 0))
     // Queue of active traversals. A traversal is a list of visited indices in reverse order.
     val queue = mutable.Queue[List[Int]]()
     val visited = new Array[Boolean](canyon.length)
-    if (canyon.length > 0) {
-      // visit first element
-      queue += List(0)
-      visited(0) = true
-    }
+    // visit first element
+    queue += List(0)
+    visited(0) = true
     // Breadth-first search to find a traveral with the smallest number of flights.
     for (flights <- Iterator.from(1).takeWhile(_ => queue nonEmpty)) {
       for (traversals <- queue.size - 1 to 0 by -1) {
@@ -75,7 +59,7 @@ object Dragon {
             for ((canyonIndex, traversalIndex) <- traversal.zipWithIndex) {
               result(flights - traversalIndex - 1) = canyonIndex
             }
-            return result
+            return Some(result)
           }
           // If we jumped to new element, enqueue new traversal for future exploration.
           if (!visited(nextIndex)) {
@@ -86,6 +70,19 @@ object Dragon {
       }
     }
     // no solution
-    Array()
+    None
+  }
+
+  /**
+   * Returns array of numbers read from the given input stream.
+   */
+  def parse(in: Source): Array[Int] = in.getLines map (_.toInt) toArray
+
+  /**
+   * Returns string representation for the given solution.
+   */
+  def format(indices: Array[Int]): String = {
+    require(indices nonEmpty)
+    indices.mkString("", ", ", ", " + Out)
   }
 }
