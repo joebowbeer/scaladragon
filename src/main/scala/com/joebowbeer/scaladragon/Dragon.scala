@@ -19,7 +19,7 @@ object Dragon {
    * @param args the unused command line arguments
    */
   def main(args: Array[String]) {
-    solve(Source.fromInputStream(System.in), System.out)
+    solve(Source fromInputStream(System in), System out)
   }
 
   /**
@@ -27,7 +27,7 @@ object Dragon {
    */
   def solve(in: Source, out: PrintStream) {
     val solution = try { solve(parse(in)) } catch { case _: Exception => None }
-    out.println(solution.map(format).getOrElse(Failure))
+    out println(solution map(format) getOrElse(Failure))
   }
 
   /**
@@ -39,16 +39,16 @@ object Dragon {
   def solve(canyon: Array[Int]): Option[Array[Int]] = {
     require(canyon.nonEmpty && canyon(0) != 0 && canyon.forall(_ >= 0))
     // Queue of active traversals. A traversal is a list of visited indices in reverse order.
-    val queue = mutable.Queue[List[Int]]()
-    val visited = new Array[Boolean](canyon.length)
+    val queue = mutable Queue[List[Int]]()
+    val visited = new Array[Boolean](canyon length)
     // visit first element
     queue += List(0)
     visited(0) = true
     // Breadth-first search to find a traveral with the smallest number of flights.
-    for (flights <- Iterator.from(1).takeWhile(_ => queue nonEmpty)) {
+    for (flights <- Iterator from(1) takeWhile(_ => queue nonEmpty)) {
       for (traversals <- queue.size - 1 to 0 by -1) {
-        val traversal = queue.dequeue
-        val lastIndex = traversal.head
+        val traversal = queue dequeue
+        val lastIndex = traversal head
         val longestFlight = canyon(lastIndex)
         // If longestFlight is 0, a dragon be there and the loop below does nothing.
         for (flight <- longestFlight to 1 by -1) {
@@ -56,7 +56,7 @@ object Dragon {
           if (nextIndex >= canyon.length) {
             // Canyon traversed! Return array of canyon indices.
             val result = new Array[Int](flights)
-            for ((canyonIndex, traversalIndex) <- traversal.zipWithIndex) {
+            for ((canyonIndex, traversalIndex) <- traversal zipWithIndex) {
               result(flights - traversalIndex - 1) = canyonIndex
             }
             return Some(result)
@@ -83,6 +83,6 @@ object Dragon {
    */
   def format(indices: Array[Int]): String = {
     require(indices nonEmpty)
-    indices.mkString("", ", ", ", " + Out)
+    indices mkString("", ", ", ", " + Out)
   }
 }
