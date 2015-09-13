@@ -13,56 +13,55 @@ class DragonSuite extends JUnitSuite with Matchers {
     val canyon = Array(1)
     val solution = Array(0)
     checkSolution(canyon, solution)
-    Dragon solve (canyon) should contain(solution)
+    Dragon solve (canyon) should contain (solution)
   }
 
   @Test def solvesSample() {
     val canyon = Array(5, 6, 0, 4, 2, 4, 1, 0, 0, 4)
     val solution = Array(0, 5, 9)
     checkSolution(canyon, solution)
-    Dragon solve (canyon) should contain(solution)
+    Dragon solve (canyon) should contain (solution)
   }
 
   @Test def parsesEmpty() {
-    Dragon parse (source()) should be(Array())
+    Dragon parse (source()) should be (Array())
   }
 
   @Test def parsesOne() {
-    Dragon parse (source(1)) should be(Array(1))
+    Dragon parse (source(1)) should be (Array(1))
   }
 
   @Test def parsesSampleInput() {
-    Dragon parse (source(5, 6, 0, 4, 2, 4, 1, 0, 0, 4)) should be(
-      Array(5, 6, 0, 4, 2, 4, 1, 0, 0, 4)
-    )
+    Dragon parse (source(5, 6, 0, 4, 2, 4, 1, 0, 0, 4)) should be
+      (Array(5, 6, 0, 4, 2, 4, 1, 0, 0, 4))
   }
 
   @Test def formatsZero() {
-    Dragon format (Array(0)) should be("0, out")
+    Dragon format (Array(0)) should be ("0, out")
   }
 
   @Test def formatsSampleSolution() {
-    Dragon format (Array(0, 5, 9)) should be("0, 5, 9, out")
+    Dragon format (Array(0, 5, 9)) should be ("0, 5, 9, out")
   }
 
   @Test def failsEmptyInput() {
-    solutionOf() should be("failure")
+    solutionOf() should be ("failure")
   }
 
   @Test def solvesOneInput() {
-    solutionOf(1) should be("0, out")
+    solutionOf(1) should be ("0, out")
   }
 
   @Test def solvesSampleInput() {
-    solutionOf(5, 6, 0, 4, 2, 4, 1, 0, 0, 4) should be("0, 5, 9, out")
+    solutionOf(5, 6, 0, 4, 2, 4, 1, 0, 0, 4) should be ("0, 5, 9, out")
   }
 
   @Test def failsInitialDragon() {
-    solutionOf(0) should be("failure")
+    solutionOf(0) should be ("failure")
   }
 
   @Test def failsNegativeInput() {
-    solutionOf(-1) should be("failure")
+    solutionOf(-1) should be ("failure")
   }
 
   @Test def solvesRandomCanyons() {
@@ -89,7 +88,7 @@ class DragonSuite extends JUnitSuite with Matchers {
     val baos = new ByteArrayOutputStream()
     val ps = new PrintStream(baos)
     try {
-      Dragon solve (source(values: _*), ps)
+      Dragon solve(source(values: _*), ps)
     } finally {
       ps close ()
     }
