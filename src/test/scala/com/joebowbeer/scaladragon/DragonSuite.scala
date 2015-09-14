@@ -13,35 +13,35 @@ class DragonSuite extends JUnitSuite with Matchers {
     val canyon = Array(1)
     val solution = Array(0)
     checkSolution(canyon, solution)
-    Dragon solve (canyon) should contain (solution)
+    Dragon.solve(canyon) should contain (solution)
   }
 
   @Test def solvesSample() {
     val canyon = Array(5, 6, 0, 4, 2, 4, 1, 0, 0, 4)
     val solution = Array(0, 5, 9)
     checkSolution(canyon, solution)
-    Dragon solve (canyon) should contain (solution)
+    Dragon.solve(canyon) should contain (solution)
   }
 
   @Test def parsesEmpty() {
-    Dragon parse (source()) should be (Array())
+    Dragon.parse(source()) should be (Array())
   }
 
   @Test def parsesOne() {
-    Dragon parse (source(1)) should be (Array(1))
+    Dragon.parse(source(1)) should be (Array(1))
   }
 
   @Test def parsesSampleInput() {
-    Dragon parse (source(5, 6, 0, 4, 2, 4, 1, 0, 0, 4)) should be
+    Dragon.parse(source(5, 6, 0, 4, 2, 4, 1, 0, 0, 4)) should be
       (Array(5, 6, 0, 4, 2, 4, 1, 0, 0, 4))
   }
 
   @Test def formatsZero() {
-    Dragon format (Array(0)) should be ("0, out")
+    Dragon.format(Array(0)) should be ("0, out")
   }
 
   @Test def formatsSampleSolution() {
-    Dragon format (Array(0, 5, 9)) should be ("0, 5, 9, out")
+    Dragon.format(Array(0, 5, 9)) should be ("0, 5, 9, out")
   }
 
   @Test def failsEmptyInput() {
@@ -70,9 +70,9 @@ class DragonSuite extends JUnitSuite with Matchers {
     val dragonCount = 10000
     for (trial <- 0 until 10) {
       val canyon = randomCanyon(canyonLength, longestFlight, dragonCount)
-      Dragon solve (canyon) match {
+      Dragon.solve(canyon) match {
         case Some(traversal) => {
-          printf("Trial %2d: traversal length %d%n", trial, traversal length)
+          printf("Trial %2d: traversal length %d%n", trial, traversal.length)
           checkSolution(canyon, traversal)
         }
         case None => printf("Trial %2d: No traversal!%n", trial)
@@ -81,18 +81,18 @@ class DragonSuite extends JUnitSuite with Matchers {
   }
 
   def source(values: Int*): Source = {
-    Source fromString (if (values nonEmpty) values mkString ("", "\n", "\n") else "")
+    Source.fromString(if (values.nonEmpty) values.mkString("", "\n", "\n") else "")
   }
 
   def solutionOf(values: Int*): String = {
     val baos = new ByteArrayOutputStream()
     val ps = new PrintStream(baos)
     try {
-      Dragon solve(source(values: _*), ps)
+      Dragon.solve(source(values: _*), ps)
     } finally {
-      ps close ()
+      ps.close ()
     }
-    Source.fromString(baos toString).getLines.next
+    Source.fromString(baos.toString()).getLines().next()
   }
 
   def randomCanyon(canyonLength: Int, longestFlight: Int, dragonCount: Int): Array[Int] = {
@@ -119,9 +119,9 @@ class DragonSuite extends JUnitSuite with Matchers {
   /** Validates traversal. */
   def checkSolution(canyon: Array[Int], traversal: Array[Int]) = {
     // Verify that 0 is visited first.
-    assert(traversal(0) == 0)
+    assert(0 == traversal(0))
     // Verify each cell is reachable from its predecessor and that final flight leaves the canyon.
-    traversal.foldRight(canyon length) { (index, nextIndex) =>
+    traversal.foldRight(canyon.length) { (index, nextIndex) =>
       assert(index + canyon(index) >= nextIndex)
       index
     }
